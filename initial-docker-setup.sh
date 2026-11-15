@@ -39,6 +39,19 @@ detect_codename() {
     fi
 }
 
+require_ubuntu() {
+    local distribution="${UBUNTU_ID:-}"
+    if [[ -z "$distribution" ]]; then
+        # shellcheck disable=SC1091
+        source /etc/os-release
+        distribution="$ID"
+    fi
+    if [[ "$distribution" != ubuntu ]]; then
+        printf 'This installer supports Ubuntu only (detected: %s)\n' "$distribution" >&2
+        return 1
+    fi
+}
+
 install_keyring_and_source() {
     local architecture="$1" codename="$2"
     run_root install -m 0755 -d /etc/apt/keyrings
@@ -68,6 +81,7 @@ main() {
         return 1
     fi
 
+    require_ubuntu
     local architecture codename
     architecture="$(detect_architecture)"
     codename="$(detect_codename)"

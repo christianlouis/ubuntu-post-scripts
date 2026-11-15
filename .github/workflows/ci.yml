@@ -1,0 +1,16 @@
+name: Shell checks
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate bootstrap script without host changes
+        run: tests/test_initial_docker_setup.sh
